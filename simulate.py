@@ -67,7 +67,7 @@ for csv_file in csv_files:
 
 trading_days = 155
 
-simulation_size = 500
+simulation_size = 500000
 
 # targets = [{ 'target': 1.005 + 0.0000005 * i, 'running total': [1000.0 for _ in range(simulation_size)] } for i in range(10000)]
 
@@ -77,8 +77,9 @@ running_totals = [1000.0 for _ in range(simulation_size)]
 
 target = 1.008778
 
+print(len(quotes.keys()))
+
 for i in range(trading_days):
-  print(i)
   equities = choices([key for key in quotes.keys()], k=simulation_size)
   for (j, equity) in enumerate(equities):
     quote = quotes[equity][i]
@@ -89,9 +90,25 @@ for i in range(trading_days):
       position_exit = position_entry_shares * target_price
     else:
       position_exit = position_entry_shares * quote.close_price
+    if position_exit > 500:
+      # regulatory transaction fee
+      position_exit -= position_exit * 22.9 / 1000000.0
+    if position_entry_shares > 50:
+      # trading activity fee
+      position_exit -= 0.00013 * position_entry_shares      
     running_totals[j] = position_exit
 
-print(sorted(running_totals))
+# print(sorted(running_totals))
+
+print(f'less than 700: {len([x for x in running_totals if x < 700])}')
+print(f'at least 700 and less than 800: {len([x for x in running_totals if x >= 700 and x < 800])}')
+print(f'at least 800 and less than 900: {len([x for x in running_totals if x >= 800 and x < 900])}')
+print(f'at least 900 and less than 1000: {len([x for x in running_totals if x >= 900 and x < 1000])}')
+print(f'at least 1000 and less than 1100: {len([x for x in running_totals if x >= 1000 and x < 1100])}')
+print(f'at least 1100 and less than 1200: {len([x for x in running_totals if x >= 1100 and x < 1200])}')
+print(f'at least 1200 and less than 1300: {len([x for x in running_totals if x >= 1200 and x < 1300])}')
+print(f'at least 1300 and less than 1400: {len([x for x in running_totals if x >= 1300 and x < 1400])}')
+print(f'at least 1400: {len([x for x in running_totals if x >= 1400])}')
 
 '''
 x = [st['target'] for st in targets]
